@@ -10,8 +10,8 @@ from azure.search.documents.indexes import SearchIndexClient
 from azure.search.documents.indexes.models import AnalyzeTextOptions, LexicalAnalyzerName
 from azure.search.documents.indexes.aio import SearchIndexClient as SearchIndexClientAsync
 
-def get_search_client(index_name_env = "AZURE_SEARCH_INDEX"):
 
+def get_search_index_client(index_name_env="AZURE_SEARCH_INDEX"):
     load_dotenv(override=True) # take environment variables from .env.
 
     # Variables not used here do not need to be updated in your .env file
@@ -23,6 +23,16 @@ def get_search_client(index_name_env = "AZURE_SEARCH_INDEX"):
     search_index_client = SearchIndexClient(endpoint, credential=credential)
     print("index_name: ", index_name)
     print(search_index_client.get_index_statistics(index_name))
+
+    return search_index_client
+
+
+def get_search_client(index_name_env="AZURE_SEARCH_INDEX"):
+
+    load_dotenv(override=True) # take environment variables from .env.
+    index_name = os.environ.get(index_name_env)
+
+    search_index_client = get_search_index_client(index_name_env)
 
     search_client = search_index_client.get_search_client(index_name)
 
@@ -42,10 +52,10 @@ def get_search_client_aio() -> bool:
     search_index_aio = SearchIndexClientAsync(endpoint, credential=credential)
     index = asyncio.run( search_index_aio.get_index(index_name))
     # await search_index_aio.close()
-    for f in index.fields: 
+    for f in index.fields:
         print(f.name)
 
-    return True    
+    return True
 
 
 # import asyncio
